@@ -1,0 +1,28 @@
+{
+    "name": "frank/enum",
+    "description": "An enumeration class for PHP",
+    "authors": [
+        {
+            "name": "Frank",
+            "homepage": "https://www.frank.shop/"
+        }
+    ],
+    "license": "MIT",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Frank\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frank\\Test\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    }
+}

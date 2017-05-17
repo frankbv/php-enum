@@ -4,10 +4,10 @@ namespace Frank\Test;
 
 use Frank\Enum;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
-use PHPUnit_Framework_TestCase;
 
-class EnumTest extends PHPUnit_Framework_TestCase
+class EnumTest extends TestCase
 {
     public function testValidConstruction()
     {

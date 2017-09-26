@@ -85,19 +85,36 @@ abstract class Enum
         return $this->value === $value;
     }
 
-    public function equals(Enum $other): bool
+    /**
+     * @param mixed $other
+     * @return bool
+     */
+    public function equals($other): bool
     {
         return $other instanceof $this && $other->value() === $this->value();
     }
 
-    public function assertEquals(Enum $other)
+    /**
+     * @param mixed $other
+     * @throws UnexpectedValueException
+     * @throws InvalidArgumentException
+     */
+    public function assertEquals($other)
     {
         if (!$this->equals($other)) {
-            throw new UnexpectedValueException(sprintf(
-                'Failed to assert %s equals %s',
-                $this->value(),
-                $other->value()
-            ));
+            if ($other instanceof $this) {
+                throw new UnexpectedValueException(sprintf(
+                    'Failed to assert %s equals %s',
+                    $this->value(),
+                    $other->value()
+                ));
+            } else {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot compare %s to %s',
+                    is_object($other) ? get_class($other) : gettype($other),
+                    static::class
+                ));
+            }
         }
     }
 

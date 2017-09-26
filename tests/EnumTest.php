@@ -30,9 +30,67 @@ class EnumTest extends TestCase
     public function testAssertEquals()
     {
         (new _EnumTest(2))->assertEquals(_EnumTest::BAR());
+        $this->assertTrue(true);
+    }
 
+    public function testAssertEqualsWhenInstanceOf()
+    {
+        (new _EnumTest(2))->assertEquals(
+            new class(2) extends _EnumTest {
+                const BAZ = 'baz';
+            }
+        );
+
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @param mixed $other
+     * @dataProvider notEqualsProvider
+     */
+    public function testAssertEqualsFailsWhenNotEqual($other)
+    {
         $this->expectException(UnexpectedValueException::class);
-        (new _EnumTest(2))->assertEquals(_EnumTest::FOO());
+        (new _EnumTest(2))->assertEquals($other);
+    }
+
+    public function notEqualsProvider()
+    {
+        return [
+            [_EnumTest::FOO()],
+            [
+                new class('baz') extends _EnumTest {
+                    const BAZ = 'baz';
+                }
+            ],
+        ];
+    }
+
+    /**
+     * @param mixed $other
+     * @dataProvider notInstanceOfProvider
+     */
+    public function testAssertEqualsFailsWhenNotInstanceOf($other)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new _EnumTest(2))->assertEquals($other);
+    }
+
+    public function notInstanceOfProvider()
+    {
+        return [
+            [null],
+            [1],
+            [3.14],
+            ['string'],
+            [new class() {}],
+            [
+                new class(1) extends Enum
+                {
+                    const FOO = 1;
+                }
+            ],
+        ];
     }
 
     /**

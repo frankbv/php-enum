@@ -80,6 +80,7 @@ class EnumTest extends TestCase
     {
         return [
             [null],
+            [false],
             [1],
             [3.14],
             ['string'],

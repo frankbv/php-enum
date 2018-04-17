@@ -30,7 +30,7 @@ abstract class Enum
      */
     public function __construct($value)
     {
-        if (!self::isValidValue($value)) {
+        if (!static::isValidValue($value)) {
             throw new InvalidArgumentException(sprintf('%s is not a valid value for %s', $value, static::class));
         }
         $this->value = $value;
@@ -59,7 +59,7 @@ abstract class Enum
     }
 
     /**
-     * @return Enum[]
+     * @return static[]
      */
     public static function all(): array
     {
@@ -128,7 +128,7 @@ abstract class Enum
      * constant name to
      * @param $name
      * @param $arguments
-     * @return Enum
+     * @return static
      */
     public static function __callStatic($name, $arguments)
     {

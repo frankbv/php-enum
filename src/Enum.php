@@ -19,6 +19,12 @@ abstract class Enum
      * @var mixed[]
      */
     private static $constants = [];
+    /**
+     * Cache of enums retrieved through static calls
+     *
+     * @var Enum[][]
+     */
+    private static $cache;
 
     /**
      * @var mixed the internal value
@@ -63,9 +69,14 @@ abstract class Enum
      */
     public static function all(): array
     {
-        return array_map(function ($value) {
-            return new static($value);
-        }, static::getConstants());
+        $classname = static::class;
+        if (!isset(self::$cache[$classname])) {
+            self::$cache[$classname] = array_map(function ($value) {
+                return new static($value);
+            }, static::getConstants());
+        }
+
+        return self::$cache[$classname];
     }
 
     /**
@@ -132,6 +143,16 @@ abstract class Enum
      */
     public static function __callStatic($name, $arguments)
     {
-        return new static(constant(static::class . '::' . $name));
+        return self::getCached($name);
+    }
+
+    private static function getCached(string $name): Enum
+    {
+        $classname = static::class;
+        if (!isset(self::$cache[$classname])) {
+            static::all();
+        }
+
+        return self::$cache[$classname][$name];
     }
 }

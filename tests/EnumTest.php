@@ -142,6 +142,25 @@ class EnumTest extends TestCase
         $this->assertEquals('1', _EnumTest::FOO()->__toString());
         $this->assertEquals((string)false, _EnumTest::NOT_TRUE()->__toString());
     }
+
+    public function testStaticCallsProduceTheSameObject()
+    {
+        $this->assertSame(_EnumTest::FOO(), _EnumTest::FOO());
+    }
+
+    public function testMemoryUsage()
+    {
+        $iterations = 1000;
+        $list = range(0, $iterations);
+
+        $start = memory_get_usage();
+        foreach ($list as $ii) {
+            $list[$ii] = _EnumTest::FOO();
+        }
+        $end = memory_get_usage();
+
+        $this->assertEquals($start, $end);
+    }
 }
 
 /**

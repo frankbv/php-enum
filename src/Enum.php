@@ -152,7 +152,7 @@ abstract class Enum
     public static function __callStatic($name, $arguments)
     {
         $constants = static::getConstants();
-        if (!isset($constants[$name])) {
+        if (!isset($constants[$name]) && !array_key_exists($name, $constants)) {
             throw new InvalidArgumentException(sprintf('%s does not exist in %s', $name, static::class));
         }
 

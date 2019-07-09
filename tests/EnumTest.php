@@ -132,6 +132,7 @@ class EnumTest extends TestCase
             'PLACED' => 'placed',
             'YOLO' => 'yolo',
             'NOT_TRUE' => false,
+            'NONE' => null,
         ];
 
         $this->assertEquals($expected, _EnumTest::getConstants());
@@ -161,6 +162,11 @@ class EnumTest extends TestCase
         _EnumTest::DOESNOTEXIST();
     }
 
+    public function testNullValueDoesNotProduceAnException()
+    {
+        $this->assertNull(_EnumTest::NONE()->value());
+    }
+
     public function testMemoryUsage()
     {
         $iterations = 1000;
@@ -180,6 +186,7 @@ class EnumTest extends TestCase
  * @method static _EnumTest FOO()
  * @method static _EnumTest BAR()
  * @method static _EnumTest NOT_TRUE()
+ * @method static _EnumTest NONE()
  */
 class _EnumTest extends Enum
 {
@@ -190,4 +197,5 @@ class _EnumTest extends Enum
     const PLACED = 'placed';
     const YOLO = 'yolo';
     const NOT_TRUE = false;
+    const NONE = null;
 }

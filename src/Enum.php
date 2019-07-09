@@ -24,7 +24,7 @@ abstract class Enum
      *
      * @var Enum[][]
      */
-    private static $cache;
+    private static $cache = [];
 
     /**
      * @var mixed the internal value
@@ -69,14 +69,9 @@ abstract class Enum
      */
     public static function all(): array
     {
-        $classname = static::class;
-        if (!isset(self::$cache[$classname])) {
-            self::$cache[$classname] = array_map(function ($value) {
-                return new static($value);
-            }, static::getConstants());
-        }
-
-        return self::$cache[$classname];
+        return array_map(function ($value) {
+            return static::of($value);
+        }, static::getConstants());
     }
 
     /**
@@ -135,6 +130,19 @@ abstract class Enum
     }
 
     /**
+     * @param mixed $value
+     * @return static
+     */
+    public final static function of($value): self
+    {
+        $className = static::class;
+        if (!isset(self::$cache[$className][$value])) {
+            self::$cache[$className][$value] = new static($value);
+        }
+        return self::$cache[$className][$value];
+    }
+
+    /**
      * Makes it possible to easily instantiate an Enum by statically calling the
      * constant name to
      * @param $name
@@ -143,16 +151,11 @@ abstract class Enum
      */
     public static function __callStatic($name, $arguments)
     {
-        return self::getCached($name);
-    }
-
-    private static function getCached(string $name): Enum
-    {
-        $classname = static::class;
-        if (!isset(self::$cache[$classname])) {
-            static::all();
+        $constants = static::getConstants();
+        if (!isset($constants[$name])) {
+            throw new InvalidArgumentException(sprintf('%s does not exist in %s', $name, static::class));
         }
 
-        return self::$cache[$classname][$name];
+        return static::of($constants[$name]);
     }
 }

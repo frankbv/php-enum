@@ -148,6 +148,19 @@ class EnumTest extends TestCase
         $this->assertSame(_EnumTest::FOO(), _EnumTest::FOO());
     }
 
+    public function testOfProduceTheSameObjectAsStaticCalls()
+    {
+        $this->assertSame(_EnumTest::of(_EnumTest::FOO), _EnumTest::FOO());
+    }
+
+    public function testInvalidStaticCallsProduceAnException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('DOESNOTEXIST does not exist in ' . _EnumTest::class);
+
+        _EnumTest::DOESNOTEXIST();
+    }
+
     public function testMemoryUsage()
     {
         $iterations = 1000;

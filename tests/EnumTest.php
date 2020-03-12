@@ -180,6 +180,18 @@ class EnumTest extends TestCase
 
         $this->assertEquals($start, $end);
     }
+
+    public function testIsAny()
+    {
+        $this->assertTrue(_EnumTest::FOO()->isAny(['dsdf', null, '1', _EnumTest::FOO, true]));
+        $this->assertFalse(_EnumTest::FOO()->isAny(['dsdf', null, '1', true]));
+    }
+
+    public function testEqualsAny()
+    {
+        $this->assertTrue(_EnumTest::FOO()->equalsAny(_EnumTest::all()));
+        $this->assertFalse(_EnumTest::FOO()->equalsAny([_EnumTest::NONE(), _EnumTest::BAR(), new class() {}]));
+    }
 }
 
 /**

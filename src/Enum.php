@@ -92,12 +92,42 @@ abstract class Enum
     }
 
     /**
+     * @param mixed[] $values
+     * @return bool
+     */
+    public function isAny(array $values): bool
+    {
+        foreach ($values as $value) {
+            if ($this->is($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param mixed $other
      * @return bool
      */
     public function equals($other): bool
     {
         return $other instanceof $this && $other->value() === $this->value();
+    }
+
+    /**
+     * @param mixed[] $others
+     * @return bool
+     */
+    public function equalsAny(array $others): bool
+    {
+        foreach ($others as $other) {
+            if ($this->equals($other)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

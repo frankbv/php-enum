@@ -11,20 +11,20 @@ use UnexpectedValueException;
  * Please do add method annotations as well
  * Example: (@)method static Enum FOO()
  */
-abstract class Enum
+abstract class Enum implements \Stringable
 {
     /**
      * Cached array of arrays with constants for each parent class
      * indexed by classname
-     * @var mixed[]
+     * @var array<string, array<string, mixed>>
      */
-    private static $constants = [];
+    private static array $constants = [];
     /**
      * Cache of enums retrieved through static calls
      *
-     * @var Enum[][]
+     * @var array<string, array<Enum>>
      */
-    private static $cache = [];
+    private static array $cache = [];
 
     /**
      * @var mixed the internal value
@@ -43,9 +43,9 @@ abstract class Enum
     }
 
     /**
-     * @return mixed[] array of constants name => value
+     * @return array<string, array<string, mixed>> array of constants name => value
      */
-    public static function getConstants()
+    public static function getConstants(): array
     {
         $classname = static::class;
         if (!isset(self::$constants[$classname])) {
@@ -61,7 +61,7 @@ abstract class Enum
      */
     public static function isValidValue($value): bool
     {
-        return in_array($value, self::getConstants(), true);
+        return \in_array($value, self::getConstants(), true);
     }
 
     /**
@@ -69,7 +69,7 @@ abstract class Enum
      */
     public static function all(): array
     {
-        return array_map(function ($value) {
+        return \array_map(function ($value) {
             return static::of($value);
         }, static::getConstants());
     }
@@ -112,7 +112,7 @@ abstract class Enum
      */
     public function equals($other): bool
     {
-        return $other instanceof $this && $other->value() === $this->value();
+        return $other instanceof $this && $this->is($other->value());
     }
 
     /**
@@ -135,19 +135,19 @@ abstract class Enum
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
      */
-    public function assertEquals($other)
+    public function assertEquals($other): void
     {
         if (!$this->equals($other)) {
             if ($other instanceof $this) {
-                throw new UnexpectedValueException(sprintf(
+                throw new UnexpectedValueException(\sprintf(
                     'Failed to assert %s equals %s',
                     $this->value(),
                     $other->value()
                 ));
             } else {
-                throw new InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(\sprintf(
                     'Cannot compare %s to %s',
-                    is_object($other) ? get_class($other) : gettype($other),
+                    \is_object($other) ? \get_class($other) : \gettype($other),
                     static::class
                 ));
             }

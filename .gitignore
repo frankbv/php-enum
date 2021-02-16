@@ -1,6 +1,3 @@
-# Project
 composer.lock
 vendor/**
-
-# IDE
-.idea/**
+.phpunit.result.cache

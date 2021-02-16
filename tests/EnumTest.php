@@ -192,6 +192,20 @@ class EnumTest extends TestCase
         $this->assertTrue(_EnumTest::FOO()->equalsAny(_EnumTest::all()));
         $this->assertFalse(_EnumTest::FOO()->equalsAny([_EnumTest::NONE(), _EnumTest::BAR(), new class() {}]));
     }
+
+    public function testDontAllowEnumCreationWithPrivateConst()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('private is not a valid value for Frank\Test\_EnumTest');
+        new _EnumTest('private');
+    }
+
+    public function testDontExposePrivateConst()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('I_AM_PRIVATE does not exist in Frank\Test\_EnumTest');
+        _EnumTest::I_AM_PRIVATE();
+    }
 }
 
 /**
@@ -210,4 +224,6 @@ class _EnumTest extends Enum
     const YOLO = 'yolo';
     const NOT_TRUE = false;
     const NONE = null;
+
+    private const I_AM_PRIVATE = 'private';
 }

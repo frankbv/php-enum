@@ -173,6 +173,15 @@ abstract class Enum
     }
 
     /**
+     * @param mixed[] $values
+     * @return static[]
+     */
+    public final static function ofList(array $values): array
+    {
+        return \array_map(static fn($value) => self::of($value), $values);
+    }
+
+    /**
      * Makes it possible to easily instantiate an Enum by statically calling the
      * constant name to
      * @param $name

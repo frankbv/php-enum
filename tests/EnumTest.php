@@ -192,6 +192,11 @@ class EnumTest extends TestCase
         $this->assertTrue(_EnumTest::FOO()->equalsAny(_EnumTest::all()));
         $this->assertFalse(_EnumTest::FOO()->equalsAny([_EnumTest::NONE(), _EnumTest::BAR(), new class() {}]));
     }
+
+    public function testOfList()
+    {
+        $this->assertEquals([_EnumTest::FOO(), _EnumTest::BAR()], _EnumTest::ofList([_EnumTest::FOO, _EnumTest::BAR]));
+    }
 }
 
 /**

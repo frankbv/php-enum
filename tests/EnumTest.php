@@ -192,6 +192,39 @@ class EnumTest extends TestCase
         $this->assertTrue(_EnumTest::FOO()->equalsAny(_EnumTest::all()));
         $this->assertFalse(_EnumTest::FOO()->equalsAny([_EnumTest::NONE(), _EnumTest::BAR(), new class() {}]));
     }
+
+    public function testOfList()
+    {
+        $this->assertEquals([_EnumTest::FOO(), _EnumTest::BAR()], _EnumTest::ofList([_EnumTest::FOO, _EnumTest::BAR]));
+    }
+
+    public function testDontAllowEnumCreationWithPrivateConst()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('private is not a valid value for Frank\Test\_EnumTest');
+        new _EnumTest('private');
+    }
+
+    public function testDontExposePrivateConst()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('I_AM_PRIVATE does not exist in Frank\Test\_EnumTest');
+        _EnumTest::I_AM_PRIVATE();
+    }
+
+    public function testDontAllowEnumCreationWithProtectedConst()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('protected is not a valid value for Frank\Test\_EnumTest');
+        new _EnumTest('protected');
+    }
+
+    public function testDontExposeProtectedConst()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('I_AM_PROTECTED does not exist in Frank\Test\_EnumTest');
+        _EnumTest::I_AM_PROTECTED();
+    }
 }
 
 /**
@@ -210,4 +243,7 @@ class _EnumTest extends Enum
     const YOLO = 'yolo';
     const NOT_TRUE = false;
     const NONE = null;
+
+    private const I_AM_PRIVATE = 'private';
+    protected const I_AM_PROTECTED = 'protected';
 }

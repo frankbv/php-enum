@@ -49,8 +49,14 @@ abstract class Enum implements \Stringable
     {
         $classname = static::class;
         if (!isset(self::$constants[$classname])) {
-            $reflection = new ReflectionClass($classname);
-            self::$constants[$classname] = $reflection->getConstants();
+            $reflections = (new ReflectionClass($classname))->getReflectionConstants();
+
+            self::$constants[$classname] = [];
+            foreach ($reflections as $reflection) {
+                if ($reflection->isPublic()) {
+                    self::$constants[$classname][$reflection->getName()] = $reflection->getValue();
+                }
+            }
         }
         return self::$constants[$classname];
     }
@@ -170,6 +176,15 @@ abstract class Enum implements \Stringable
             self::$cache[$className][$value] = new static($value);
         }
         return self::$cache[$className][$value];
+    }
+
+    /**
+     * @param mixed[] $values
+     * @return static[]
+     */
+    public final static function ofList(array $values): array
+    {
+        return \array_map(static fn($value) => self::of($value), $values);
     }
 
     /**

@@ -12,5 +12,5 @@ composer install frankbv/enum
 
 MIT license, see the [`LICENSE`](LICENSE) file.
 
-(c) 2017 Frank b.v.
+(c) 2017-2021 Frank b.v.
 https://www.frank.shop/

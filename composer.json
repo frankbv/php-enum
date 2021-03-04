@@ -25,5 +25,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
+    },
+    "suggest": {
+        "frankbv/phpstan-enum": "PHPStan extension for frankbv/enum"
     }
 }

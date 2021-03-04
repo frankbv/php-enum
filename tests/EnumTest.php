@@ -9,31 +9,31 @@ use UnexpectedValueException;
 
 class EnumTest extends TestCase
 {
-    public function testValidConstruction()
+    public function testValidConstruction(): void
     {
         $this->assertEquals(2, (new _EnumTest(2))->value());
     }
 
-    public function testInvalidConstruction()
+    public function testInvalidConstruction(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new _EnumTest(10);
     }
 
-    public function testGetAll()
+    public function testGetAll(): void
     {
         $all = _EnumTest::all();
         $this->assertTrue($all['HELLO']->is(5));
         $this->assertTrue($all['NOT_TRUE']->is(false));
     }
 
-    public function testAssertEquals()
+    public function testAssertEquals(): void
     {
         (new _EnumTest(2))->assertEquals(_EnumTest::BAR());
         $this->assertTrue(true);
     }
 
-    public function testAssertEqualsWhenInstanceOf()
+    public function testAssertEqualsWhenInstanceOf(): void
     {
         (new _EnumTest(2))->assertEquals(
             new class(2) extends _EnumTest {
@@ -48,13 +48,13 @@ class EnumTest extends TestCase
      * @param mixed $other
      * @dataProvider notEqualsProvider
      */
-    public function testAssertEqualsFailsWhenNotEqual($other)
+    public function testAssertEqualsFailsWhenNotEqual($other): void
     {
         $this->expectException(UnexpectedValueException::class);
         (new _EnumTest(2))->assertEquals($other);
     }
 
-    public function notEqualsProvider()
+    public function notEqualsProvider(): iterable
     {
         return [
             [_EnumTest::FOO()],
@@ -70,13 +70,13 @@ class EnumTest extends TestCase
      * @param mixed $other
      * @dataProvider notInstanceOfProvider
      */
-    public function testAssertEqualsFailsWhenNotInstanceOf($other)
+    public function testAssertEqualsFailsWhenNotInstanceOf($other): void
     {
         $this->expectException(InvalidArgumentException::class);
         (new _EnumTest(2))->assertEquals($other);
     }
 
-    public function notInstanceOfProvider()
+    public function notInstanceOfProvider(): iterable
     {
         return [
             [null],
@@ -98,7 +98,7 @@ class EnumTest extends TestCase
      * @param $value
      * @dataProvider validValues
      */
-    public function testForValidValues($value)
+    public function testForValidValues($value): void
     {
         $this->assertTrue(_EnumTest::isValidValue($value));
     }
@@ -110,19 +110,19 @@ class EnumTest extends TestCase
 
     /**
      * @param $value
-     * @dataProvider invalidValues
+     * @dataProvider invalidValuesProvider
      */
-    public function testForInvalidValues($value)
+    public function testForInvalidValues($value): void
     {
         $this->assertFalse(_EnumTest::isValidValue($value));
     }
 
-    public function invalidValues(): array
+    public function invalidValuesProvider(): array
     {
         return [[-1], [0], [4], [10], ['ape'], ['BANANAS'], [true], [[1, 2, 3]]];
     }
 
-    public function testItGivesRightConstants()
+    public function testItGivesRightConstants(): void
     {
         $expected = [
             'FOO' => 1,
@@ -138,23 +138,23 @@ class EnumTest extends TestCase
         $this->assertEquals($expected, _EnumTest::getConstants());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $this->assertEquals('1', _EnumTest::FOO()->__toString());
         $this->assertEquals((string)false, _EnumTest::NOT_TRUE()->__toString());
     }
 
-    public function testStaticCallsProduceTheSameObject()
+    public function testStaticCallsProduceTheSameObject(): void
     {
         $this->assertSame(_EnumTest::FOO(), _EnumTest::FOO());
     }
 
-    public function testOfProduceTheSameObjectAsStaticCalls()
+    public function testOfProduceTheSameObjectAsStaticCalls(): void
     {
         $this->assertSame(_EnumTest::of(_EnumTest::FOO), _EnumTest::FOO());
     }
 
-    public function testInvalidStaticCallsProduceAnException()
+    public function testInvalidStaticCallsProduceAnException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('DOESNOTEXIST does not exist in ' . _EnumTest::class);
@@ -162,12 +162,12 @@ class EnumTest extends TestCase
         _EnumTest::DOESNOTEXIST();
     }
 
-    public function testNullValueDoesNotProduceAnException()
+    public function testNullValueDoesNotProduceAnException(): void
     {
         $this->assertNull(_EnumTest::NONE()->value());
     }
 
-    public function testMemoryUsage()
+    public function testMemoryUsage(): void
     {
         $iterations = 1000;
         $list = range(0, $iterations);
@@ -181,13 +181,13 @@ class EnumTest extends TestCase
         $this->assertEquals($start, $end);
     }
 
-    public function testIsAny()
+    public function testIsAny(): void
     {
         $this->assertTrue(_EnumTest::FOO()->isAny(['dsdf', null, '1', _EnumTest::FOO, true]));
         $this->assertFalse(_EnumTest::FOO()->isAny(['dsdf', null, '1', true]));
     }
 
-    public function testEqualsAny()
+    public function testEqualsAny(): void
     {
         $this->assertTrue(_EnumTest::FOO()->equalsAny(_EnumTest::all()));
         $this->assertFalse(_EnumTest::FOO()->equalsAny([_EnumTest::NONE(), _EnumTest::BAR(), new class() {}]));

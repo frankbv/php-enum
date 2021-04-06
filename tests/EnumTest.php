@@ -11,35 +11,31 @@ class EnumTest extends TestCase
 {
     public function testValidConstruction(): void
     {
-        $this->assertEquals(2, (new _EnumTest(2))->value());
+        $this->assertEquals(2, TestEnum::of(2)->value());
     }
 
     public function testInvalidConstruction(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new _EnumTest(10);
+        TestEnum::of(10);
     }
 
     public function testGetAll(): void
     {
-        $all = _EnumTest::all();
+        $all = TestEnum::all();
         $this->assertTrue($all['HELLO']->is(5));
         $this->assertTrue($all['NOT_TRUE']->is(false));
     }
 
     public function testAssertEquals(): void
     {
-        (new _EnumTest(2))->assertEquals(_EnumTest::BAR());
+        TestEnum::of(2)->assertEquals(TestEnum::BAR());
         $this->assertTrue(true);
     }
 
     public function testAssertEqualsWhenInstanceOf(): void
     {
-        (new _EnumTest(2))->assertEquals(
-            new class(2) extends _EnumTest {
-                const BAZ = 'baz';
-            }
-        );
+        TestEnum::of(2)->assertEquals(ChildTestEnum::of(2));
 
         $this->assertTrue(true);
     }
@@ -51,18 +47,14 @@ class EnumTest extends TestCase
     public function testAssertEqualsFailsWhenNotEqual($other): void
     {
         $this->expectException(UnexpectedValueException::class);
-        (new _EnumTest(2))->assertEquals($other);
+        TestEnum::of(2)->assertEquals($other);
     }
 
     public function notEqualsProvider(): iterable
     {
         return [
-            [_EnumTest::FOO()],
-            [
-                new class('baz') extends _EnumTest {
-                    const BAZ = 'baz';
-                }
-            ],
+            [TestEnum::FOO()],
+            [ChildTestEnum::of('baz')],
         ];
     }
 
@@ -73,7 +65,7 @@ class EnumTest extends TestCase
     public function testAssertEqualsFailsWhenNotInstanceOf($other): void
     {
         $this->expectException(InvalidArgumentException::class);
-        (new _EnumTest(2))->assertEquals($other);
+        TestEnum::of(2)->assertEquals($other);
     }
 
     public function notInstanceOfProvider(): iterable
@@ -85,12 +77,7 @@ class EnumTest extends TestCase
             [3.14],
             ['string'],
             [new class() {}],
-            [
-                new class(1) extends Enum
-                {
-                    const FOO = 1;
-                }
-            ],
+            [AnotherTestEnum::of(1)],
         ];
     }
 
@@ -100,7 +87,7 @@ class EnumTest extends TestCase
      */
     public function testForValidValues($value): void
     {
-        $this->assertTrue(_EnumTest::isValidValue($value));
+        $this->assertTrue(TestEnum::isValidValue($value));
     }
 
     public function validValues(): array
@@ -114,7 +101,7 @@ class EnumTest extends TestCase
      */
     public function testForInvalidValues($value): void
     {
-        $this->assertFalse(_EnumTest::isValidValue($value));
+        $this->assertFalse(TestEnum::isValidValue($value));
     }
 
     public function invalidValuesProvider(): array
@@ -135,36 +122,36 @@ class EnumTest extends TestCase
             'NONE' => null,
         ];
 
-        $this->assertEquals($expected, _EnumTest::getConstants());
+        $this->assertEquals($expected, TestEnum::getConstants());
     }
 
     public function testToString(): void
     {
-        $this->assertEquals('1', _EnumTest::FOO()->__toString());
-        $this->assertEquals((string)false, _EnumTest::NOT_TRUE()->__toString());
+        $this->assertEquals('1', TestEnum::FOO()->__toString());
+        $this->assertEquals((string)false, TestEnum::NOT_TRUE()->__toString());
     }
 
     public function testStaticCallsProduceTheSameObject(): void
     {
-        $this->assertSame(_EnumTest::FOO(), _EnumTest::FOO());
+        $this->assertSame(TestEnum::FOO(), TestEnum::FOO());
     }
 
     public function testOfProduceTheSameObjectAsStaticCalls(): void
     {
-        $this->assertSame(_EnumTest::of(_EnumTest::FOO), _EnumTest::FOO());
+        $this->assertSame(TestEnum::of(TestEnum::FOO), TestEnum::FOO());
     }
 
     public function testInvalidStaticCallsProduceAnException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('DOESNOTEXIST does not exist in ' . _EnumTest::class);
+        $this->expectExceptionMessage('DOESNOTEXIST does not exist in ' . TestEnum::class);
 
-        _EnumTest::DOESNOTEXIST();
+        TestEnum::DOESNOTEXIST();
     }
 
     public function testNullValueDoesNotProduceAnException(): void
     {
-        $this->assertNull(_EnumTest::NONE()->value());
+        $this->assertNull(TestEnum::NONE()->value());
     }
 
     public function testMemoryUsage(): void
@@ -174,7 +161,7 @@ class EnumTest extends TestCase
 
         $start = memory_get_usage();
         foreach ($list as $ii) {
-            $list[$ii] = _EnumTest::FOO();
+            $list[$ii] = TestEnum::FOO();
         }
         $end = memory_get_usage();
 
@@ -183,57 +170,57 @@ class EnumTest extends TestCase
 
     public function testIsAny(): void
     {
-        $this->assertTrue(_EnumTest::FOO()->isAny(['dsdf', null, '1', _EnumTest::FOO, true]));
-        $this->assertFalse(_EnumTest::FOO()->isAny(['dsdf', null, '1', true]));
+        $this->assertTrue(TestEnum::FOO()->isAny(['dsdf', null, '1', TestEnum::FOO, true]));
+        $this->assertFalse(TestEnum::FOO()->isAny(['dsdf', null, '1', true]));
     }
 
     public function testEqualsAny(): void
     {
-        $this->assertTrue(_EnumTest::FOO()->equalsAny(_EnumTest::all()));
-        $this->assertFalse(_EnumTest::FOO()->equalsAny([_EnumTest::NONE(), _EnumTest::BAR(), new class() {}]));
+        $this->assertTrue(TestEnum::FOO()->equalsAny(TestEnum::all()));
+        $this->assertFalse(TestEnum::FOO()->equalsAny([TestEnum::NONE(), TestEnum::BAR(), new class() {}]));
     }
 
     public function testOfList()
     {
-        $this->assertEquals([_EnumTest::FOO(), _EnumTest::BAR()], _EnumTest::ofList([_EnumTest::FOO, _EnumTest::BAR]));
+        $this->assertEquals([TestEnum::FOO(), TestEnum::BAR()], TestEnum::ofList([TestEnum::FOO, TestEnum::BAR]));
     }
 
     public function testDontAllowEnumCreationWithPrivateConst()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('private is not a valid value for Frank\Test\_EnumTest');
-        new _EnumTest('private');
+        $this->expectExceptionMessage('private is not a valid value for ' . TestEnum::class);
+        TestEnum::of('private');
     }
 
     public function testDontExposePrivateConst()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('I_AM_PRIVATE does not exist in Frank\Test\_EnumTest');
-        _EnumTest::I_AM_PRIVATE();
+        $this->expectExceptionMessage('I_AM_PRIVATE does not exist in ' . TestEnum::class);
+        TestEnum::I_AM_PRIVATE();
     }
 
     public function testDontAllowEnumCreationWithProtectedConst()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('protected is not a valid value for Frank\Test\_EnumTest');
-        new _EnumTest('protected');
+        $this->expectExceptionMessage('protected is not a valid value for ' . TestEnum::class);
+        TestEnum::of('protected');
     }
 
     public function testDontExposeProtectedConst()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('I_AM_PROTECTED does not exist in Frank\Test\_EnumTest');
-        _EnumTest::I_AM_PROTECTED();
+        $this->expectExceptionMessage('I_AM_PROTECTED does not exist in ' . TestEnum::class);
+        TestEnum::I_AM_PROTECTED();
     }
 }
 
 /**
- * @method static _EnumTest FOO()
- * @method static _EnumTest BAR()
- * @method static _EnumTest NOT_TRUE()
- * @method static _EnumTest NONE()
+ * @method static static FOO()
+ * @method static static BAR()
+ * @method static static NOT_TRUE()
+ * @method static static NONE()
  */
-class _EnumTest extends Enum
+class TestEnum extends Enum
 {
     const FOO = 1;
     const BAR = 2;
@@ -246,4 +233,14 @@ class _EnumTest extends Enum
 
     private const I_AM_PRIVATE = 'private';
     protected const I_AM_PROTECTED = 'protected';
+}
+
+class ChildTestEnum extends TestEnum
+{
+    const BAZ = 'baz';
+}
+
+class AnotherTestEnum extends Enum
+{
+    const FOO = 1;
 }

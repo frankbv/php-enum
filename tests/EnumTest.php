@@ -212,6 +212,12 @@ class EnumTest extends TestCase
         $this->expectExceptionMessage('I_AM_PROTECTED does not exist in ' . TestEnum::class);
         TestEnum::I_AM_PROTECTED();
     }
+
+    public function testCloningIsForbidden()
+    {
+        $this->expectException(\Error::class);
+        clone TestEnum::BAR();
+    }
 }
 
 /**

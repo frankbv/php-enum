@@ -34,12 +34,16 @@ abstract class Enum implements \Stringable
     /**
      * @param mixed $value
      */
-    private function __construct($value)
+    final private function __construct($value)
     {
         if (!static::isValidValue($value)) {
             throw new InvalidArgumentException(sprintf('%s is not a valid value for %s', $value, static::class));
         }
         $this->value = $value;
+    }
+
+    final private function __clone()
+    {
     }
 
     /**

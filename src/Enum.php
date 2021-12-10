@@ -47,7 +47,7 @@ abstract class Enum implements \Stringable
     }
 
     /**
-     * @return array<string, array<string, mixed>> array of constants name => value
+     * @return array<string, mixed> array of constants name => value
      */
     public static function getConstants(): array
     {

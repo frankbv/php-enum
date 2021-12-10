@@ -1,0 +1,40 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+name: Main
+on:
+  - push
+  - pull_request
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php-version }} tests with ${{ matrix.dependencies }} dependencies
+    strategy:
+      matrix:
+        php-version:
+          - '7.4'
+          - '8.0'
+          - '8.1'
+        dependencies:
+          - lowest
+          - highest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: none
+          php-version: ${{ matrix.php-version }}
+          tools: composer:v2
+
+      - name: Install lowest dependencies with composer
+        if: matrix.dependencies == 'lowest'
+        run: composer update --no-ansi --no-interaction --no-progress --prefer-lowest
+
+      - name: Install highest dependencies with composer
+        if: matrix.dependencies == 'highest'
+        run: composer update --no-ansi --no-interaction --no-progress
+
+      - name: PHPUnit
+        run: php vendor/bin/phpunit

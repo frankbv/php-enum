@@ -154,20 +154,6 @@ class EnumTest extends TestCase
         $this->assertNull(TestEnum::NONE()->value());
     }
 
-    public function testMemoryUsage(): void
-    {
-        $iterations = 1000;
-        $list = range(0, $iterations);
-
-        $start = memory_get_usage();
-        foreach ($list as $ii) {
-            $list[$ii] = TestEnum::FOO();
-        }
-        $end = memory_get_usage();
-
-        $this->assertEquals($start, $end);
-    }
-
     public function testIsAny(): void
     {
         $this->assertTrue(TestEnum::FOO()->isAny(['dsdf', null, '1', TestEnum::FOO, true]));

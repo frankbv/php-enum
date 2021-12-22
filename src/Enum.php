@@ -42,7 +42,7 @@ abstract class Enum implements \Stringable
         $this->value = $value;
     }
 
-    final private function __clone()
+    private function __clone()
     {
     }
 
